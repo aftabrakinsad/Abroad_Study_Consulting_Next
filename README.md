@@ -1,3 +1,33 @@
+# Abroad Study Consulting: Frontend
+
+Admin dashboard for a study-abroad consultancy, built with Next.js and Tailwind CSS. It talks to a NestJS + PostgreSQL API: [Abroad_Study_Consulting_Nest](https://github.com/aftabrakinsad/Abroad_Study_Consulting_Nest).
+
+Students (users) register and apply for study-abroad consultation. Staff accounts can't be registered; the master admin creates them and shares the credentials.
+
+| Role | What they can do | Demo login |
+|---|---|---|
+| User (student) | Register, submit applications, track status and consultant notes | `user.demo@abroadstudy.com` |
+| Master admin | Everything, including creating and deleting admins | `demo@abroadstudy.com` |
+| Admin | Manage users, applications, managers and consultants | created by the master admin |
+| Manager | Assign applications to consultants, view consultants, send emails | `manager.demo@abroadstudy.com` |
+| Consultant | Update the status of assigned applications and leave notes for students | `consultant.demo@abroadstudy.com` |
+
+All demo accounts use the password `Demo@1234`.
+
+## Running locally
+
+```bash
+cp .env.example .env.local   # point NEXT_PUBLIC_API_URL at the backend
+npm install
+npm run dev                  # http://localhost:3000
+```
+
+## Deployment
+
+Deployed on [Vercel](https://vercel.com). Set `NEXT_PUBLIC_API_URL` to the backend's URL in the project's environment variables.
+
+---
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started

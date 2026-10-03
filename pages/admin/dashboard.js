@@ -1,64 +1,63 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import SessionCheck from '../api/sessioncheck';
-import MyLayout from '../component/layout';
-import AdminDrawer from '../component/admindrawer';
-import Footer from '../component/footer';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import api from '@/lib/api';
+import DashboardShell from '@/components/dashboardshell';
+import { Card } from '@/components/ui';
+
+const stats = [
+  { key: 'users', label: 'Users', endpoint: '/admin/userCount', href: '/admin/dashboard/getUsers', accent: 'bg-purple-500/20 text-purple-300' },
+  { key: 'applications', label: 'Applications', endpoint: '/admin/applicationCount', href: '/admin/dashboard/applications', accent: 'bg-pink-500/20 text-pink-300' },
+  { key: 'admins', label: 'Admins', endpoint: '/admin/adminCount', href: '/admin/dashboard/getAdmins', accent: 'bg-blue-500/20 text-blue-300' },
+  { key: 'managers', label: 'Managers', endpoint: '/admin/managerCount', href: '/admin/dashboard/getManagers', accent: 'bg-green-500/20 text-green-300' },
+  { key: 'consultants', label: 'Consultants', endpoint: '/admin/consultantCount', href: '/admin/dashboard/getConsultants', accent: 'bg-amber-500/20 text-amber-300' },
+];
+
+const quickActions = [
+  { href: '/admin/dashboard/applications', label: 'Assign applications to consultants' },
+  { href: '/admin/dashboard/addmanager', label: 'Add a manager' },
+  { href: '/admin/dashboard/addconsultant', label: 'Add a consultant' },
+  { href: '/admin/dashboard/send-email', label: 'Send an email' },
+];
 
 const Dashboard = () => {
-  const [adminCount, setAdminCount] = useState('');
-  const [managerCount, setManagerCount] = useState('');
-  const [consultantCount, setConsultantCount] = useState('');
+  const [counts, setCounts] = useState({});
 
   useEffect(() => {
-    fetchAdminStatistics();
+    Promise.all(stats.map((s) => api.get(s.endpoint)))
+      .then((responses) => {
+        setCounts(Object.fromEntries(stats.map((s, i) => [s.key, responses[i].data])));
+      })
+      .catch((error) => console.error(error));
   }, []);
 
-  const fetchAdminStatistics = async () => {
-    try {
-      const response = await axios.get('http://localhost:3001/admin/adminCount');
-      const response2 = await axios.get('http://localhost:3001/admin/managerCount');
-      const response3 = await axios.get('http://localhost:3001/admin/consultantCount');
-      setAdminCount(response.data);
-      setManagerCount(response2.data);
-      setConsultantCount(response3.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
-    
-    <>
-    <SessionCheck/>
-      <MyLayout title="Admin Dashboard" />
-      <AdminDrawer />
-      <div class="pt-9 sm:ml-64">
-            <section class="bg-gray-50 dark:bg-gray-900">
-                <div class="flex flex-col items-center justify-center px-auto mx-auto md:h-screen lg:py-0">
-                    <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-                        <div class="pt-10 space-y-4 md:space-y-6 sm:p-8">
-                            <form class="space-y-4 md:space-y-6" action="#">                            
-                                <div className="bg-blue-200 p-4 rounded-lg shadow-md">
-                                  <h3 className="text-lg font-semibold mb-2">Admins</h3>
-                                  <p className="text-blue-700 text-xl font-bold">Total: {adminCount}</p>
-                                </div>
-                                <div className="bg-green-200 p-4 rounded-lg shadow-md">
-                                  <h3 className="text-lg font-semibold mb-2">Managers</h3>
-                                  <p className="text-green-700 text-xl font-bold">Total: {managerCount}</p>
-                                </div>
-                                <div className="bg-yellow-200 p-4 rounded-lg shadow-md">
-                                  <h3 className="text-lg font-semibold mb-2">Consultants</h3>
-                                  <p className="text-yellow-700 text-xl font-bold">Total: {consultantCount}</p>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </section>
+    <DashboardShell title="Dashboard" subtitle="An overview of students, applications and staff.">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        {stats.map((stat) => (
+          <Link key={stat.key} href={stat.href} className="group">
+            <Card className="p-5 transition group-hover:border-gray-500">
+              <span className={`inline-block rounded-md px-2 py-1 text-xs font-medium ${stat.accent}`}>{stat.label}</span>
+              <p className="mt-3 text-3xl font-bold text-white">{counts[stat.key] ?? '–'}</p>
+              <p className="mt-1 text-sm text-gray-400 group-hover:text-gray-300">View all →</p>
+            </Card>
+          </Link>
+        ))}
+      </div>
+
+      <Card className="mt-6 p-5">
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-400">Quick actions</h2>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {quickActions.map((action) => (
+            <Link
+              key={action.href}
+              href={action.href}
+              className="rounded-lg border border-gray-700 px-4 py-3 text-sm text-gray-200 transition hover:border-blue-500 hover:text-white">
+              {action.label}
+            </Link>
+          ))}
         </div>
-      <Footer />
-    </>
+      </Card>
+    </DashboardShell>
   );
 };
 
