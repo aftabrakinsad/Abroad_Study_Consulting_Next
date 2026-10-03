@@ -1,9 +1,0 @@
-{
-  "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
-  "/_document": "pages/_document.js",
-  "/admin/dashboard/Admin/update": "pages/admin/dashboard/Admin/update.js",
-  "/admin/dashboard/send-email": "pages/admin/dashboard/send-email.js",
-  "/admin/dashboard/Admin/findAdmins": "pages/admin/dashboard/Admin/findAdmins.js",
-  "/admin/dashboard/getAdmins": "pages/admin/dashboard/getAdmins.js"
-}
